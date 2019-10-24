@@ -1,0 +1,42 @@
+---
+title: "Lead Poisoning and Crime Rates"
+author: "Rahul Agasthya, Manasdeep Deb, Ajay Roopesh Mohan, Jay Rodge, Nicholas Tating"
+date: "10/17/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r importing the data, echo=FALSE}
+crimeFile <- "../data/Index_Crimes_by_County_and_Agency__Beginning_1990.csv"
+leadFile <- "../data/Childhood_Blood_Lead_Testing_and_Elevated_Incidence_by_Zip_Code__Beginning_2000.csv"
+populationFile <- "../data/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970.csv"
+
+crimes <- read.csv(file = crimeFile, stringsAsFactors = FALSE)
+lead <- read.csv(file = leadFile, stringsAsFactors = FALSE)
+population <- read.csv(file = populationFile, stringsAsFactors = FALSE)
+```
+
+```{r crime_head, echo=FALSE}
+head(crimes)
+```
+
+```{r lead_head, echo=FALSE}
+head(lead)
+```
+
+```{r pop_head, echo=FALSE}
+head(population)
+```
+
+```{r removing_columns, echo=FALSE}
+toDropLead <- c("Zip.Code.Location", "County.Location")
+lead <-lead[, !(names(lead) %in% toDropLead)]
+
+toDropCrimes <- c("Agency", "Region")
+crimes <- crimes[, !(names(crimes) %in% toDropCrimes)]
+
+# thought about removing Program.Type from the population table, though the numbers could affect our analysis https://en.wikipedia.org/wiki/Intercensal_estimate
+```
