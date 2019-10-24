@@ -185,6 +185,14 @@ summary {
 </div>
 
 
+<pre class="r"><code>crimeFile &lt;- &quot;../data/Index_Crimes_by_County_and_Agency__Beginning_1990.csv&quot;
+leadFile &lt;- &quot;../data/Childhood_Blood_Lead_Testing_and_Elevated_Incidence_by_Zip_Code__Beginning_2000.csv&quot;
+populationFile &lt;- &quot;../data/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970.csv&quot;
+
+crimes &lt;- read.csv(file = crimeFile, stringsAsFactors = FALSE)
+lead &lt;- read.csv(file = leadFile, stringsAsFactors = FALSE)
+population &lt;- read.csv(file = populationFile, stringsAsFactors = FALSE)</code></pre>
+<pre class="r"><code>head(crimes)</code></pre>
 <pre><code>##   County         Agency Year Months.Reported Index.Total Violent.Total
 ## 1 Albany Albany City PD 1990              NA        6635          1052
 ## 2 Albany Albany City PD 1991              NA        7569          1201
@@ -206,6 +214,7 @@ summary {
 ## 4                 471 Non-New York City
 ## 5                 539 Non-New York City
 ## 6                 604 Non-New York City</code></pre>
+<pre class="r"><code>head(lead)</code></pre>
 <pre><code>##    County County.Code Year   Zip Tests Less.than.5.mcg.dL X5.10.mcg.dL
 ## 1 Niagara          63 2009 14214    NA                 NA           NA
 ## 2 Niagara          63 2000 14304   109                 97            9
@@ -227,6 +236,7 @@ summary {
 ## 4             NA (43.30900656, -78.63225048)  43 20300171083
 ## 5             NA (43.24230297, -79.00721856)  43 20300171083
 ## 6             NA (42.94413648, -78.86206512)  43 20300171083</code></pre>
+<pre class="r"><code>head(population)</code></pre>
 <pre><code>##   FIPS.Code          Geography Year                   Program.Type
 ## 1     36000     New York State 2018 Postcensal Population Estimate
 ## 2     36001      Albany County 2018 Postcensal Population Estimate
@@ -241,6 +251,98 @@ summary {
 ## 4    1432132
 ## 5     191659
 ## 6      76840</code></pre>
+<pre class="r"><code>toDropLead &lt;- c(&quot;Zip.Code.Location&quot;, &quot;County.Location&quot;)
+lead &lt;-lead[, !(names(lead) %in% toDropLead)]
+
+toDropCrimes &lt;- c(&quot;Agency&quot;, &quot;Region&quot;)
+crimes &lt;- crimes[, !(names(crimes) %in% toDropCrimes)]
+
+# thought about removing Program.Type from the population table, though the numbers could affect our analysis https://en.wikipedia.org/wiki/Intercensal_estimate</code></pre>
+<pre class="r"><code>lead$County.Code &lt;- as.character(lead$County.Code)
+lead$Zip &lt;- as.character(lead$Zip)
+
+population$FIPS.Code &lt;- as.character(population$FIPS.Code)</code></pre>
+<pre class="r"><code>summary(crimes)</code></pre>
+<pre><code>##     County               Year      Months.Reported  Index.Total    
+##  Length:19956       Min.   :1990   Min.   : 0.00   Min.   :     0  
+##  Class :character   1st Qu.:1997   1st Qu.:12.00   1st Qu.:    37  
+##  Mode  :character   Median :2004   Median :12.00   Median :   148  
+##                     Mean   :2004   Mean   :11.73   Mean   :  1982  
+##                     3rd Qu.:2011   3rd Qu.:12.00   3rd Qu.:   516  
+##                     Max.   :2018   Max.   :24.00   Max.   :711556  
+##                                    NA's   :9379    NA's   :384     
+##  Violent.Total           Murder              Rape        
+##  Min.   :     0.00   Min.   :   0.000   Min.   :   0.00  
+##  1st Qu.:     2.00   1st Qu.:   0.000   1st Qu.:   0.00  
+##  Median :    10.00   Median :   0.000   Median :   1.00  
+##  Mean   :   324.56   Mean   :   3.396   Mean   :  12.84  
+##  3rd Qu.:    40.25   3rd Qu.:   0.000   3rd Qu.:   4.00  
+##  Max.   :174689.00   Max.   :2245.000   Max.   :3125.00  
+##  NA's   :384         NA's   :384        NA's   :384      
+##     Robbery         Aggravated.Assault Property.Total      Burglary     
+##  Min.   :     0.0   Min.   :    0.0    Min.   :     0   Min.   :     0  
+##  1st Qu.:     0.0   1st Qu.:    1.0    1st Qu.:    33   1st Qu.:     5  
+##  Median :     1.0   Median :    7.0    Median :   136   Median :    22  
+##  Mean   :   139.6   Mean   :  168.7    Mean   :  1658   Mean   :   322  
+##  3rd Qu.:     5.0   3rd Qu.:   28.0    3rd Qu.:   470   3rd Qu.:    93  
+##  Max.   :100377.0   Max.   :68942.0    Max.   :536867   Max.   :120019  
+##  NA's   :384        NA's   :384        NA's   :384      NA's   :384     
+##     Larceny       Motor.Vehicle.Theft
+##  Min.   :     0   Min.   :     0.0   
+##  1st Qu.:    25   1st Qu.:     0.0   
+##  Median :   107   Median :     4.0   
+##  Mean   :  1138   Mean   :   197.8   
+##  3rd Qu.:   353   3rd Qu.:    16.0   
+##  Max.   :273176   Max.   :147128.0   
+##  NA's   :384      NA's   :384</code></pre>
+<pre class="r"><code>summary(lead)</code></pre>
+<pre><code>##     County          County.Code             Year          Zip           
+##  Length:29807       Length:29807       Min.   :2000   Length:29807      
+##  Class :character   Class :character   1st Qu.:2003   Class :character  
+##  Mode  :character   Mode  :character   Median :2007   Mode  :character  
+##                                        Mean   :2007                     
+##                                        3rd Qu.:2010                     
+##                                        Max.   :2014                     
+##                                                                         
+##      Tests         Less.than.5.mcg.dL  X5.10.mcg.dL    X10...15.mcg.dL
+##  Min.   :   6.00   Min.   :   6.0     Min.   :  6.00   Min.   : 6.00  
+##  1st Qu.:  12.00   1st Qu.:  51.0     1st Qu.:  8.00   1st Qu.: 8.50  
+##  Median :  28.00   Median : 117.0     Median : 13.00   Median :12.00  
+##  Mean   :  79.45   Mean   : 170.5     Mean   : 22.11   Mean   :14.93  
+##  3rd Qu.:  88.00   3rd Qu.: 223.0     3rd Qu.: 25.00   3rd Qu.:19.00  
+##  Max.   :2039.00   Max.   :1986.0     Max.   :265.00   Max.   :47.00  
+##  NA's   :12988     NA's   :25295      NA's   :25274    NA's   :29580  
+##   X15...mcg.dL   Total.Elevated.Blood.Levels    Percent       
+##  Min.   : 6.00   Min.   : 6.00               Min.   :  0.070  
+##  1st Qu.: 8.00   1st Qu.: 7.00               1st Qu.:  1.210  
+##  Median : 9.00   Median :10.00               Median :  2.885  
+##  Mean   :11.94   Mean   :14.72               Mean   :  7.903  
+##  3rd Qu.:14.00   3rd Qu.:17.00               3rd Qu.:  6.385  
+##  Max.   :38.00   Max.   :84.00               Max.   :100.000  
+##  NA's   :29580   NA's   :29114               NA's   :24247    
+##  Rate.per.1.000   
+##  Min.   :   0.70  
+##  1st Qu.:  12.10  
+##  Median :  28.85  
+##  Mean   :  79.03  
+##  3rd Qu.:  63.85  
+##  Max.   :1000.00  
+##  NA's   :24247</code></pre>
+<pre class="r"><code>summary(population)</code></pre>
+<pre><code>##   FIPS.Code          Geography              Year      Program.Type      
+##  Length:3402        Length:3402        Min.   :1970   Length:3402       
+##  Class :character   Class :character   1st Qu.:1981   Class :character  
+##  Mode  :character   Mode  :character   Median :1994   Mode  :character  
+##                                        Mean   :1994                     
+##                                        3rd Qu.:2006                     
+##                                        Max.   :2018                     
+##    Population      
+##  Min.   :    4434  
+##  1st Qu.:   51575  
+##  Median :   88150  
+##  Mean   :  589341  
+##  3rd Qu.:  251891  
+##  Max.   :19661411</code></pre>
 
 
 

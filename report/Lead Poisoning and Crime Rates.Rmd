@@ -3,15 +3,15 @@ title: "Lead Poisoning and Crime Rates"
 author: "Rahul Agasthya, Manasdeep Deb, Ajay Roopesh Mohan, Jay Rodge, Nicholas Tating"
 date: "10/17/2019"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.path = "../images")
 ```
 
-```{r importing the data, echo=FALSE}
+```{r importing the data}
 crimeFile <- "../data/Index_Crimes_by_County_and_Agency__Beginning_1990.csv"
 leadFile <- "../data/Childhood_Blood_Lead_Testing_and_Elevated_Incidence_by_Zip_Code__Beginning_2000.csv"
 populationFile <- "../data/Annual_Population_Estimates_for_New_York_State_and_Counties__Beginning_1970.csv"
@@ -21,19 +21,19 @@ lead <- read.csv(file = leadFile, stringsAsFactors = FALSE)
 population <- read.csv(file = populationFile, stringsAsFactors = FALSE)
 ```
 
-```{r crime_head, echo=FALSE}
+```{r crime_head}
 head(crimes)
 ```
 
-```{r lead_head, echo=FALSE}
+```{r lead_head}
 head(lead)
 ```
 
-```{r pop_head, echo=FALSE}
+```{r pop_head}
 head(population)
 ```
 
-```{r removing_columns, echo=FALSE}
+```{r removing_columns}
 toDropLead <- c("Zip.Code.Location", "County.Location")
 lead <-lead[, !(names(lead) %in% toDropLead)]
 
@@ -41,4 +41,23 @@ toDropCrimes <- c("Agency", "Region")
 crimes <- crimes[, !(names(crimes) %in% toDropCrimes)]
 
 # thought about removing Program.Type from the population table, though the numbers could affect our analysis https://en.wikipedia.org/wiki/Intercensal_estimate
+```
+
+```{r set_data_types}
+lead$County.Code <- as.character(lead$County.Code)
+lead$Zip <- as.character(lead$Zip)
+
+population$FIPS.Code <- as.character(population$FIPS.Code)
+```
+
+```{r crimes_summary}
+summary(crimes)
+```
+
+```{r lead_summary}
+summary(lead)
+```
+
+```{r population_summary}
+summary(population)
 ```
