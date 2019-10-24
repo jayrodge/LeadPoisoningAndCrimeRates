@@ -2,11 +2,13 @@
 title: "Lead Poisoning and Crime Rates"
 author: "Rahul Agasthya, Manasdeep Deb, Ajay Roopesh Mohan, Jay Rodge, Nicholas Tating"
 date: "10/17/2019"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.path = "../images")
 ```
 
 ```{r importing the data, echo=FALSE}
