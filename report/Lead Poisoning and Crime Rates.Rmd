@@ -9,6 +9,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, fig.path = "../images")
+library(GGally)
+library(corrplot)
+library(RColorBrewer)
 ```
 
 ```{r importing the data}
@@ -26,7 +29,8 @@ head(crimes)
 ```
 
 ```{r lead_head}
-head(lead)
+#head(lead)
+ncol(lead)
 ```
 
 ```{r pop_head}
@@ -55,7 +59,7 @@ summary(crimes)
 ```
 
 ```{r lead_summary}
-summary(lead)
+
 ```
 
 ```{r population_summary}
@@ -63,7 +67,50 @@ summary(population)
 ```
 
 ```{r lead_na_omit}
-omitted <- na.omit(lead)
-summary(omitted)
+lead_clean <- na.omit(lead)
+summary(lead_clean)
 # note that removing rows with NA brings us from 29807 observations to 227...
+```
+
+```{r}
+drops <- c("Agency","Index Total")
+crimes <-crimes[ , !(names(crimes) %in% drops)]
+```
+
+```{r}
+#list of common counties in Lead and Crime dataset
+ c(intersect(lead_clean$County, crimes$County))
+```
+
+```{r}
+commonCounties <- c("Niagara", "Onondaga", "Erie", "Orange","Oneida","Westchester", "Montgomery","Monroe","Albany",      "Fulton","Broome", "Ulster","Dutchess", "Chautauqua", "Rockland")
+```
+
+```{r}
+lead_processed = subset(lead_clean, commonCounties %in% lead_clean$County)
+rownames(lead_processed) <- 1:nrow(lead_processed)
+lead_processed
+```
+
+```{r}
+Crime_processed = subset(crimes, commonCounties %in% crimes$County)
+rownames(Crime_processed) <- 1:nrow(Crime_processed)
+Crime_processed
+```
+
+```{r}
+Merge_dataframe <- merge(lead_processed,Crime_processed,by=c("County"))
+Merge_dataframe
+```
+
+```{r}
+ggcorr(Merge_dataframe$)
+```
+
+```{r}
+
+```
+
+```{r}
+
 ```
